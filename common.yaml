@@ -333,8 +333,6 @@ packages:
   # Include RHEL EULA documents. This is safe to include in a shared package list
   # because redhat-release-eula is provided by centos-stream-release in CentOS Stream
   - redhat-release-eula
-  # Support for Fibre Channel over Ethernet (FCoE)
-  - fcoe-utils
 
 packages-x86_64:
   # Temporary add of open-vm-tools. Should be removed when containerized
@@ -348,6 +346,9 @@ packages-x86_64:
   # Upstream PR https://github.com/coreos/fedora-coreos-config/pull/786
   # This package is only available on x86_64 and aarch64: https://issues.redhat.com/browse/ENGCMP-5941
   - WALinuxAgent-udev
+  # Support for Fibre Channel over Ethernet (FCoE)
+  # Only for x86_64 due to other architectures lacking the required kernel modules (qedf, bnx2fc, fnic)
+  - fcoe-utils
 
 packages-ppc64le:
   - irqbalance
