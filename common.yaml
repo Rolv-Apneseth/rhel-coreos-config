@@ -11,11 +11,6 @@ include:
   - packages-rhcos.yaml
   - packages-overrides.yaml
 
-variables:
-  # upper manifests can override this when deriving from minimal-plus instead of
-  # doing a base compose
-  deriving: false
-
 # Layers common to all versions of RHCOS and SCOS
 ostree-layers:
   - overlay/01fcos
@@ -46,19 +41,6 @@ conditional-include:
   - if: osversion == "rhel-10.2"
     include:
       - manifest-el10-shared.yaml
-  # We also pick up from fedora-bootc while not deriving until we can move
-  # to building via container (i.e. deriving=true) where the manifests will
-  # be delivered in the builder bootc container image.
-  - if: deriving == false
-    include: fedora-bootc/minimal-plus/manifest.yaml
-  # Still need `opt-usrlocal: var` and `machineid-compat: false` in the
-  # non-build-via-container workflow because rpm-ostree compose tree will
-  # fail without it. This is done in the postprocess (see coreos-bootc-delta.yaml)
-  # for build-via-container workflow.
-  - if: deriving == false
-    include:
-      opt-usrlocal: var
-      machineid-compat: false
 
 documentation: false
 
@@ -207,7 +189,6 @@ postprocess:
     chmod 440 /etc/sudoers.d/coreos-sudo-group
 
   # Add the sudo group to /etc/group in container-native flow.
-  # We can nuke `etc-group-members` once this is the only supported path.
   - |
     #!/usr/bin/env bash
     set -xeuo pipefail
@@ -258,23 +239,6 @@ postprocess:
         echo "${actuals}" 1>&2
         exit 1
     fi
-
-# Add the sudo group to /etc/group
-# This is re-implemented below for the container-native flow. Nuke this once
-# that's the only path we support.
-etc-group-members:
-  - sudo
-
-ignore-removed-users:
-  - root
-ignore-removed-groups:
-  - root
-check-passwd:
-  type: "file"
-  filename: "passwd"
-check-groups:
-  type: "file"
-  filename: "group"
 
 # A lof of packages are inherited by the manifests included at the top.
 packages:
