@@ -29,3 +29,5 @@
   streams:
     - rhel-9.8
     - rhel-10.2
+    - c9s
+    - c10s
