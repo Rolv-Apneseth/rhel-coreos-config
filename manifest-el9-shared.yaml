@@ -60,3 +60,17 @@ postprocess:
     #!/usr/bin/env bash
     set -xeo pipefail
     ln -sr /usr/share/zoneinfo/UTC /etc/localtime
+
+  # mstflint rpm package may have broken symlink '/usr/lib64/libmtcr_ul.a',
+  # let's check and remove it.
+  # https://redhat.atlassian.net/browse/RHEL-160059
+  - |
+    #!/usr/bin/env bash
+    set -xeuo pipefail
+    # This is only needed on aarch64 where mstflint is installed.
+    if [ "$(uname -m)" == "aarch64" ]; then
+        linkname=/usr/lib64/libmtcr_ul.a
+        if [ -L "${linkname}" ] && [ ! -e "${linkname}" ]; then
+            rm -f "${linkname}"
+        fi
+    fi
