@@ -127,41 +127,6 @@ postprocess:
       authselect test sssd --${pam_file} | tail -n +2 > /etc/pam.d/${pam_file}
     done
 
-  # Make sure that we do not ship broken symlinks:
-  # https://github.com/openshift/os/issues/1003
-  # Remove known broken symlinks that point to non-existing files or directories
-  - |
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    list_broken_symlinks_folders=(
-      '/etc/alternatives/'
-      '/usr/lib/.build-id/'
-    )
-
-    # It is not possible to remove files from usr after first boot so that is
-    # why we are removing them in the postprocess scripts here.
-
-    list_known_removed_folders=(
-      '/usr/bin/systemd-firstboot'
-      '/usr/lib/systemd/system-generators/systemd-gpt-auto-generator'
-      '/usr/share/doc/'
-      '/usr/share/info/'
-      '/usr/share/man/'
-      )
-    for folder in "${list_broken_symlinks_folders[@]}"; do
-        find "${folder}" -type l | while read -r file_name; do
-            real_path=$(realpath -m "${file_name}");
-            if [[ -e "${real_path}" ]]; then
-              continue
-            fi
-            for element in "${list_known_removed_folders[@]}"; do
-              if [[ "${real_path}" == "${element}"* ]]; then
-                  rm -r "${file_name}"
-              fi
-            done
-        done
-    done
   - |
     #!/usr/bin/env bash
     set -xeo pipefail
@@ -195,20 +160,6 @@ postprocess:
     if [ -f /run/.containerenv ]; then
         grep sudo /usr/lib/group >> /etc/group
     fi
-
-  # Delete documentation.
-  - |
-    #!/usr/bin/env bash
-    set -xeuo pipefail
-
-    # We don't ship man(1) or info(1)
-    rm -rf /usr/share/info
-    rm -rf /usr/share/man
-    # Drop text docs too
-    rm -rf /usr/share/doc
-
-    # Nuke broken alternatives links
-    rm -f /etc/alternatives/*-man
 
   # Implement exclude-packages: in a postprocess because when building
   # via container we don't have exclude-packages functionality.
