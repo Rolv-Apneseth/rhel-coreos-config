@@ -33,6 +33,9 @@
       "matchManagers": [
         "custom.regex"
       ],
+      "addLabels": [
+          "lgtm"
+      ],
       "matchPackageNames": [
         "/quay.io/centos-bootc/centos-bootc/"
       ],
@@ -52,6 +55,9 @@
     {
       "matchManagers": [
         "custom.regex"
+      ],
+      "addLabels": [
+          "lgtm"
       ],
       "matchPackageNames": [
         "/quay.io/centos-bootc/centos-bootc/"
@@ -73,6 +79,9 @@
       "matchManagers": [
         "custom.regex"
       ],
+      "addLabels": [
+          "lgtm"
+      ],
       "matchPackageNames": [
         "/registry.stage.redhat.io/rhel10/rhel-bootc.*/"
       ],
@@ -92,6 +101,9 @@
     {
       "matchManagers": [
         "custom.regex"
+      ],
+      "addLabels": [
+          "lgtm"
       ],
       "matchPackageNames": [
         "/registry.stage.redhat.io/rhel9/rhel-bootc.*/"
